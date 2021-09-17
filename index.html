@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Weather App</title>
+        <style>
+            body{
+                margin: 0;
+                font-size: 2rem;
+                font-family: fantasy;
+                line-height: 1.5;
+                color: #ffffff;
+                text-align: center;
+                background-color: #8cd1d9;
+            }
+            .container{
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+            }
+            .weather-box{
+                height: 250px;
+                width: 250px;
+                border-radius: 12px;
+                background: #8cd1d9;
+                box-shadow:  9px 9px 27px #66999e, -9px -9px 27px #b2ffff;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="weather-box">
+                <div class="icon">---</div>
+                <div class="temp">-°C</div>
+                <div class="summary">----</div>
+                <div class="location"></div>
+            </div>
+        </div>
+
+        <script>
+            let lon;
+            let lat;
+            let temperature = document.querySelector(".temp");
+            let summary = document.querySelector(".summary");
+            let loc = document.querySelector(".location");
+            let icon = document.querySelector(".icon");
+            const kelvin = 273;
+
+            window.addEventListener("load", () => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition((position) => {
+                console.log(position);
+                lon = position.coords.longitude;
+                lat = position.coords.latitude;
+  
+      // API ID
+      const api = "6d055e39ee237af35ca066f35474e9df";
+  
+      // API URL
+      const base =
+        `http://api.openweathermap.org/data/2.5/weather?lat=${lat}&` +
+        `lon=${lon}&appid=6d055e39ee237af35ca066f35474e9df`;
+        
+            // Calling the API
+            fetch(base)
+                .then((response) => {
+                return response.json();
+                })
+                .then((data) => {
+                console.log(data);
+                temperature.textContent = 
+                    Math.floor(data.main.temp - kelvin) + "°C";
+                summary.textContent = data.weather[0].description;
+                loc.textContent = data.name + "," + data.sys.country;
+                let icon1 = data.weather[0].icon;
+                let iconurl = "http://openweathermap.org/img/w/" + icon1 + ".png";
+                icon.innerHTML = 
+                    `<img src=${iconurl} />`;
+                });
+            });
+        }
+        });
+        </script>
+    </body>
+</html>
